@@ -1,0 +1,73 @@
+#!/bin/sh
+
+if [ $# -ne 2 -a $# -ne 3 ]; then
+cat <<EOF
+Usage: $(basename $0) <commit> <-option>
+Usage: $(basename $0) <commit> <commit> <-option>
+EOF
+  exit 1
+fi
+
+if [ $# -eq 2 ]; then
+  COMMIT=$1
+  OPTION=$2
+fi
+
+if [ $# -eq 3 ]; then
+  COMMIT="$1 $2"
+  OPTION=$3
+fi
+
+#### 設定ファイル読み込み_start ####
+declare -A label
+declare -A dest
+declare -A ref
+declare -A ex
+. git-up-file.conf
+#### 設定ファイル読み込み_end ####
+
+if [ -n "${label[$OPTION]}" ]
+then
+
+  if [ -n "${ref[$OPTION]}" ]
+  then
+    REF=${ref[$OPTION]}
+    CMD=$(git diff --name-only --diff-filter=MACR $COMMIT | grep -E $REF)
+  else
+    CMD=$(git diff --name-only --diff-filter=MACR $COMMIT)
+  fi
+
+  label=${label[$OPTION]}
+  dest=${dest[$OPTION]}
+  ex=${ex[$OPTION]}
+  send=$(git rev-parse --show-toplevel)"/"$ex
+  list=$CMD
+
+else
+  echo "該当するオプションがありません。設定ファイルを確認してください。"
+  exit 1
+fi
+
+
+echo "【"$label"】"
+echo "-------------------------------------------"
+for i in $list; do
+  echo ${i#$ex/}
+done
+echo "-------------------------------------------"
+echo "上記のファイルを"
+echo $dest
+echo "へコピーします。"
+echo "Yes or No? (Y/n):"
+read yn
+if [ "${yn}" = "Y" -o "${yn}" = "y" -o  "${yn}" = "yes" ]
+then
+
+cd $send
+
+for i in $list; do
+  cp -v --parents ${i#$ex/} $dest
+done
+else
+  echo "キャンセルしました"
+fi
