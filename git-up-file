@@ -52,7 +52,11 @@ fi
 echo "【"$label"】"
 echo "-------------------------------------------"
 for i in $list; do
-  echo ${i#$ex/}
+  if [ `echo ${i#$ex/} | grep '_cdg'` ]; then
+    echo ${i#$ex'/_cdg'/}
+  else
+    echo ${i#$ex/}
+  fi
 done
 echo "-------------------------------------------"
 echo "上記のファイルを"
@@ -63,10 +67,16 @@ read yn
 if [ "${yn}" = "Y" -o "${yn}" = "y" -o  "${yn}" = "yes" ]
 then
 
-cd $send
+# cd $send
 
 for i in $list; do
-  cp -v --parents ${i#$ex/} $dest
+  if [ `echo ${i#$ex/} | grep '_cdg'` ]; then
+    cd $send"/_cdg"
+    cp -v --parents ${i#$ex'/_cdg'/} $dest
+  else
+    cd $send
+    cp -v --parents ${i#$ex/} $dest
+  fi
 done
 else
   echo "キャンセルしました"
