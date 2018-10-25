@@ -1,8 +1,8 @@
-# git差分ファイルアップロードツール、git up-fileのご案内
+# git差分ファイルアップロードツール、git up-fileコマンドのご案内
 
 git-up-fileはコマンドラインからgit diffの差分ファイルを任意のディレクトリにアップロードするツールです。
 
-## 使えるようにするためには？
+## 使うための準備
 git-up-fileとgit-up-file.confをPATHが貼られている場所に置いて利用できます。
 または、適当なディレクトリに置いて、PATHを貼ってもOKです。
 
@@ -39,3 +39,6 @@ $ git up-file origin/master..HEAD -tour
 ※<-option>は任意で設定可能
 ※<commit>はgit diffで利用できるものと同じ
 [忘れやすい人のための git diff チートシート](http://qiita.com/shibukk/items/8c9362a5bd399b9c56be)
+
+## 改訂履歴
+* ver2: git移行によりelement配下のファイルをsvnディレクトリへUPする機能は廃止しました。
