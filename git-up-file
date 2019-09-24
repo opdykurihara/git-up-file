@@ -76,6 +76,7 @@ echo "上記のファイルを"
 echo $dest
 echo "へコピーします。"
 echo "Yes or No? (Y/n):"
+echo "個別にUPする場合(S)"
 read yn
 if [ "${yn}" = "Y" -o "${yn}" = "y" -o  "${yn}" = "yes" ]
 then
@@ -90,6 +91,37 @@ for i in $list; do
       if [ `echo ${i} | grep ${j}` ]; then
         cd $send${j}
         cp -v --parents ${i#$j/} $dest
+        echo $send${j}
+      fi
+    done
+  else
+    cd $send
+    cp -v --parents ${i/} $dest
+  fi
+done
+
+elif [ "${yn}" = "S" -o "${yn}" = "s" ]
+then
+
+cd $send
+
+for i in $list; do
+
+  if [ -n "${ex}" ]; then
+    # not empty
+    for j in $ex; do
+      if [ `echo ${i} | grep ${j}` ]; then
+        cd $send${j}
+
+        echo ${i#$j/}"Yes or No? (Y/n):"
+        read yn
+        if [ "${yn}" = "Y" -o "${yn}" = "y" -o  "${yn}" = "yes" ]
+        then
+          cp -v --parents ${i#$j/} $dest
+          echo "UPしました"
+        else
+          echo "キャンセルしました"
+        fi
         echo $send${j}
       fi
     done
